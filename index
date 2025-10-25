@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Coach Maya — Whole-Food, Plant-Based Coach</title>
+<style>
+:root {
+  --bg:#0f172a;--ink:#e5e7eb;--accent:#22c55e;--muted:#9ca3af;
+  --skin:#f1c08a;--hair:#2b1a12;--lip:#a15a4a;--card:#111827;
+}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.app{max-width:700px;width:100%;background:#0b1220;border-radius:16px;padding:24px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+h1{margin-top:0;color:var(--accent)}
+button{background:var(--accent);color:#0a0f1f;border:none;border-radius:12px;padding:10px 16px;font-weight:600;cursor:pointer;margin-top:8px}
+input,select{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #1e293b;background:var(--card);color:var(--ink)}
+label{font-size:.9rem;color:var(--muted)}
+.speech{background:var(--card);padding:12px;border-radius:10px;margin-top:10px;min-height:50px}
+.face{margin:auto;width:140px;height:160px;position:relative}
+.head{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 50% 30%,#ffe7c4,#f4cfa1 70%);position:relative;overflow:hidden;border:2px solid #f1c48e}
+.eye{position:absolute;width:16px;height:16px;background:#000;border-radius:50%;top:55px}
+.eye.left{left:40px}.eye.right{right:40px}
+.eye::after{content:'';width:5px;height:5px;background:#fff;border-radius:50%;position:absolute;top:4px;left:8px}
+.mouth{width:60px;height:28px;border:3px solid #a15a4a;border-top:none;border-radius:0 0 60px 60px;position:absolute;left:50%;bottom:35px;transform:translateX(-50%);background:#fbe0bd}
+.mouth.talking{animation:talk 350ms ease-in-out infinite}
+@keyframes talk{0%,100%{transform:translateX(-50%) scaleY(0.9)}50%{transform:translateX(-50%) scaleY(1.25)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Coach Maya — Whole-Food, Plant-Based (WFPB)</h1>
+
+  <div class="face">
+    <div class="head">
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+      <div class="mouth" id="mouth"></div>
+    </div>
+  </div>
+
+  <div class="speech" id="speech">👋 Hi! I’m <b>Coach Maya</b>. Let’s start your journey.</div>
+
+  <div id="login">
+    <label>Your name</label>
+    <input id="name" placeholder="Enter first name">
+    <label>Your motivation for a plant-based diet</label>
+    <input id="motivation" placeholder="e.g., More energy / better health">
+    <label>Email (optional for reminders)</label>
+    <input id="email" placeholder="example@email.com">
+    <label>How often do you want Maya to remind you?</label>
+    <select id="frequency">
+      <option>Daily</option><option>Every 2 days</option><option>Weekly</option>
+    </select>
+    <button id="start">Start Coaching</button>
+  </div>
+
+  <div id="checkin" hidden>
+    <h3>🌿 Daily Check-In</h3>
+    <p id="welcome"></p>
+
+    <label>1️⃣ Did you eat colorful non-starchy veggies today?</label>
+    <input id="veg" placeholder="yes/no">
+    <label>2️⃣ Any beans, peas, or lentils?</label>
+    <input id="leg" placeholder="yes/no">
+    <label>3️⃣ Whole fruit instead of juice?</label>
+    <input id="fruit" placeholder="yes/no">
+    <label>4️⃣ Any whole grains?</label>
+    <input id="grain" placeholder="yes/no">
+
+    <button id="submit">Submit</button>
+    <div id="result" class="speech"></div>
+  </div>
+</div>
+
+<script>
+const speech=document.getElementById('speech');
+const mouth=document.getElementById('mouth');
+function talk(text){speech.innerHTML=text;mouth.classList.add('talking');if('speechSynthesis'in window){let u=new SpeechSynthesisUtterance(text);u.lang='en-US';speechSynthesis.speak(u);u.onend=()=>mouth.classList.remove('talking');}else{setTimeout(()=>mouth.classList.remove('talking'),1500);}}
+const nameInput=document.getElementById('name');
+const motivation=document.getElementById('motivation');
+const start=document.getElementById('start');
+const login=document.getElementById('login');
+const checkin=document.getElementById('checkin');
+const welcome=document.getElementById('welcome');
+const result=document.getElementById('result');
+const storageKey="maya-user";
+let user=JSON.parse(localStorage.getItem(storageKey)||"null");
+if(user){login.hidden=true;checkin.hidden=false;welcome.innerHTML=`Welcome back, ${user.name}! Your why: “${user.motivation}”.`;}
+start.onclick=()=>{
+  const u={name:nameInput.value||"Friend",motivation:motivation.value||"",email:email.value||"",freq:frequency.value,history:{}};
+  localStorage.setItem(storageKey,JSON.stringify(u));
+  talk(`Hi ${u.name}! I’m Maya. We'll build habits together — colorful vegetables, beans, fruits, and whole grains. Small steps, big change.`);
+  setTimeout(()=>{login.hidden=true;checkin.hidden=false;welcome.innerHTML=`Welcome, ${u.name}! Your why: “${u.motivation}”.`;},4000);
+};
+const veg=document.getElementById('veg'),leg=document.getElementById('leg'),fruit=document.getElementById('fruit'),grain=document.getElementById('grain');
+document.getElementById('submit').onclick=()=>{
+  let y=(v)=>v.value.toLowerCase().includes('y');
+  let score=[veg,leg,fruit,grain].map(y).filter(Boolean).length;
+  if(score===4){talk('Amazing! You hit all four goals today.');result.innerHTML='🎉 Excellent! All four goals achieved — keep it up!';}
+  else if(score>=2){talk('Good work. Let’s keep improving one meal at a time.');result.innerHTML='✅ Good progress! Try adding one more plant goal tomorrow.';}
+  else{talk('No worries. Every day is a new chance to add color to your plate.');result.innerHTML='🌱 Start with one simple swap: add a fruit or handful of greens.';}
+};
+</script>
+</body>
+</html>
