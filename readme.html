@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Coach Maya – README</title>
-<style>body{font-family:system-ui,Segoe UI,Roboto,sans-serif;max-width:800px;margin:40px auto;padding:0 16px;line-height:1.5}</style>
+<style>body{font-family:system-ui,Segoe UI,Roboto,sans-serif;max-width:820px;margin:40px auto;padding:0 16px;line-height:1.55}code{background:#f3f4f6;padding:2px 6px;border-radius:6px}</style>
 </head><body>
 <h1>Coach Maya — Whole-Food, Plant-Based Coach</h1>
-<p>This repository contains a single-page web app with a speaking avatar (Coach Maya), password login, onboarding (name + one-line motivation), and daily typed check-ins for four WFPB goals. Data is stored locally in the browser and is erased when site data/history is cleared. No backend and <strong>no email</strong> are used in this build.</p>
+<p>Single-page app with a <strong>photoreal video avatar</strong>, <strong>natural US-English voice</strong> (best available on device), password login, onboarding (name, one-line motivation, email/frequency/time), daily typed check-ins for four WFPB goals, streak, 10-day history, and <strong>EmailJS reminders</strong> (client-only; fires while the page is open + catch-up on next visit).</p>
 
 <h2>Files</h2>
 <ul>
-  <li><code>index.html</code> — the complete app (avatar, login, onboarding, check-ins, streak, history, TTS).</li>
+  <li><code>index.html</code> — the complete app (avatar, voice, login, onboarding, check-ins, EmailJS reminders).</li>
   <li><code>readme.html</code> — this documentation page.</li>
-  <li><code>worker.html</code> — placeholder showing how a Worker would be added later (not required).</li>
-  <li><code>wrangler.html</code> — placeholder showing a future deployment config (not required).</li>
+  <li><code>worker.html</code> — placeholder; not used in this client-only build.</li>
+  <li><code>wrangler.html</code> — placeholder; not used in this client-only build.</li>
 </ul>
 
-<h2>How to run</h2>
+<h2>Requirements</h2>
 <ol>
-  <li>Open <code>index.html</code> directly in your browser (double-click).</li>
-  <li>Create a username + password → enter your first name + motivation.</li>
-  <li>Use the Daily Check-In. Maya will speak if you toggle Voice On.</li>
+  <li>Place a short looping video named <code>maya_idle.mp4</code> alongside <code>index.html</code>. (Blink/smile portrait, 3–8s.)</li>
+  <li>Optional: create a free <a href="https://www.emailjs.com" target="_blank" rel="noreferrer">EmailJS</a> account and paste your <code>EMAILJS_PUBLIC_KEY</code>, <code>SERVICE_ID</code>, and <code>TEMPLATE_ID</code> in <code>index.html</code>.</li>
+  <li>Open <code>index.html</code> or host via GitHub Pages.</li>
 </ol>
 
 <h2>Notes</h2>
 <ul>
-  <li>All data is stored in <code>localStorage</code>/sessionStorage on the device.</li>
-  <li>To reset, clear the site’s storage or click Create/Reset with a new password.</li>
-  <li>The avatar is a CSS/HTML drawing designed to feel young, Hispanic, and motherly.</li>
+  <li>All progress stays on the device (<code>localStorage</code>/sessionStorage). Clearing site data erases it (by design).</li>
+  <li>Client-only emails cannot send while the browser is completely closed; for 24/7 delivery, add a tiny Worker later.</li>
+  <li>Fallback CSS avatar appears if the video can’t load.</li>
 </ul>
 </body></html>
