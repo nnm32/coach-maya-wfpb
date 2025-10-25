@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Worker Stub (not used)</title></head>
+<html><head><meta charset="utf-8"><title>Worker Stub (not used)</title>
+<style>body{font-family:system-ui,Segoe UI,Roboto,sans-serif;max-width:820px;margin:40px auto;padding:0 16px;line-height:1.55}</style>
+</head>
 <body>
-<pre>
-// Worker Stub (not used in this no-email build)
-//
-// If you later add server-side email reminders or inactivity checks,
-// create a Cloudflare Worker file named worker.js (JavaScript, not HTML)
-// and paste the server code there. Then deploy with Wrangler.
-//
-// For now, Coach Maya runs entirely in the browser with local storage
-// and does not call any backend.
+<h1>Worker Stub (not used in this client-only build)</h1>
+<p>If you want reliable email reminders when users are offline, add a tiny Cloudflare Worker and cron. For now, the app uses EmailJS from the browser.</p>
+<pre>// Later replacement (JavaScript file, not HTML):
+// worker.js (Cloudflare Worker) + wrangler.toml
+// - Expose /api/subscribe, /api/ping
+// - Run hourly cron to send scheduled & inactivity nudges
 </pre>
 </body></html>
+
