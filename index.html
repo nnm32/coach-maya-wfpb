@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Coach Maya — Whole-Food, Plant-Based Coach</title>
-<meta name="description" content="Coach Maya: simple lifestyle coach for whole-food, plant-based habits with check-ins and a speaking avatar.">
+<meta name="description" content="Coach Maya: photoreal avatar + natural voice with WFPB check-ins and email reminders (single-file).">
 <style>
   :root{
     --bg:#0f172a;--ink:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--accent2:#86efac;--card:#0b1324;--line:#1f2937;
@@ -21,7 +21,11 @@
   .card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0));border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
   .coach{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;text-align:center}
 
-  /* ----- HISPANIC MAYA AVATAR ----- */
+  /* ---- Video avatar ---- */
+  #mayaVideo{width:220px;height:auto;border-radius:14px;display:block;margin:8px auto;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+  #avatarFallback{display:none}
+
+  /* ---- CSS fallback avatar (only shows if video fails) ---- */
   .avatar{position:relative;width:220px;height:260px;margin:8px auto 12px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.35))}
   .torso{position:absolute; left:50%; bottom:0; transform:translateX(-50%); width:200px; height:110px; background:linear-gradient(180deg,#6b7280,#4b5563); border-radius:100px 100px 12px 12px; border:1px solid #394150;}
   .cardi{position:absolute; left:50%; bottom:40px; transform:translateX(-50%); width:210px; height:130px; background:linear-gradient(180deg,#f1a6a6,#d77777); border-radius:120px 120px 20px 20px; border:1px solid #7a3a3a; opacity:.9;}
@@ -78,31 +82,30 @@
 <div class="app">
   <header>
     <h1>Coach Maya — Whole-Food, Plant-Based</h1>
-    <span class="tag">Password login • Local-only data • Typed replies</span>
+    <span class="tag">Photoreal video avatar • Email reminders • Local data</span>
   </header>
 
   <div class="grid">
     <!-- COACH PANEL -->
     <div class="coach card" aria-live="polite">
-      <!-- Avatar -->
-      <div class="avatar" aria-hidden="true">
-        <div class="torso"></div>
-        <div class="cardi"></div>
-        <div class="headWrap">
-          <div class="head">
-            <div class="bun"></div>
-            <div class="hairCap"></div>
-            <div class="sideWave left"></div><div class="sideWave right"></div>
-            <div class="babyHair left"></div><div class="babyHair right"></div>
-            <div class="ear left"></div><div class="ear right"></div>
-            <div class="earring left" title="gold hoop"></div>
-            <div class="earring right" title="gold hoop"></div>
-            <div class="brow left"></div><div class="brow right"></div>
-            <div class="eye left blink"></div><div class="eye right blink"></div>
-            <div class="lash left"></div><div class="lash right"></div>
-            <div class="nose"></div>
-            <div class="cheek left"></div><div class="cheek right"></div>
-            <div class="mouth" id="mouth"></div>
+      <!-- Video avatar (photoreal). Fallback shows CSS avatar if video fails -->
+      <video id="mayaVideo" src="maya_idle.mp4" playsinline autoplay muted loop></video>
+      <div id="avatarFallback">
+        <div class="avatar" aria-hidden="true">
+          <div class="torso"></div><div class="cardi"></div>
+          <div class="headWrap">
+            <div class="head">
+              <div class="bun"></div><div class="hairCap"></div>
+              <div class="sideWave left"></div><div class="sideWave right"></div>
+              <div class="babyHair left"></div><div class="babyHair right"></div>
+              <div class="ear left"></div><div class="ear right"></div>
+              <div class="earring left"></div><div class="earring right"></div>
+              <div class="brow left"></div><div class="brow right"></div>
+              <div class="eye left blink"></div><div class="eye right blink"></div>
+              <div class="lash left"></div><div class="lash right"></div>
+              <div class="nose"></div><div class="cheek left"></div><div class="cheek right"></div>
+              <div class="mouth" id="mouth"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -154,11 +157,27 @@
             Benefits: better energy, weight balance, digestion, heart health, and lower inflammation.
           </p>
         </div>
+
         <label>Your one-line motivation for this change</label>
         <input id="motivation" placeholder="e.g., I want more energy / lower cholesterol / feel good in my body" />
-        <div class="row" style="margin-top:8px">
-          <button id="btnSaveIntro">Save & Continue</button>
-          <span id="introMsg" class="small"></span>
+
+        <div style="margin-top:12px">
+          <h3 style="margin:0 0 6px">Get gentle reminders (EmailJS)</h3>
+          <label>Email</label>
+          <input id="email" type="email" placeholder="you@example.com" />
+          <label>Frequency</label>
+          <select id="freq">
+            <option value="DAILY">Daily</option>
+            <option value="MWF">Mon • Wed • Fri</option>
+            <option value="WEEKLY">Weekly</option>
+          </select>
+          <label>Preferred local time (HH:MM)</label>
+          <input id="hour" placeholder="08:00" />
+          <div class="row" style="margin-top:8px">
+            <button id="btnSaveIntro">Save & Continue</button>
+            <span id="introMsg" class="small"></span>
+          </div>
+          <p class="small">Emails are sent while the page is open; on your next visit, Maya “catches up” any overdue nudges.</p>
         </div>
       </section>
 
@@ -207,14 +226,22 @@
 
 <div class="confetti" id="confetti"></div>
 
+<!-- EmailJS SDK (client-side email) -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <script>
-/* ================== STORAGE & UTIL ================== */
-const KEY_USERS="lm_app_users"; // { username:{pass,name,motivation,onboarded,streak,history,_streakCounted} }
+/* ================= CONFIG: EmailJS ================= */
+const EMAIL_ENABLED = true;        // flip to false to disable emails
+const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+/* Template vars used: to_email, to_name, subject, message */
+
+/* ====== Storage & basics ====== */
+const KEY_USERS="lm_app_users";
 const KEY_SESSION="lm_app_session";
 const $=s=>document.querySelector(s);
-const today=new Date();
-$("#todayPill").textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"medium"}).format(today);
-
+const today=new Date(); $("#todayPill").textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"medium"}).format(today);
 function loadUsers(){return JSON.parse(localStorage.getItem(KEY_USERS)||"{}");}
 function saveUsers(u){localStorage.setItem(KEY_USERS,JSON.stringify(u));}
 function loadSession(){return JSON.parse(sessionStorage.getItem(KEY_SESSION)||"null");}
@@ -222,49 +249,109 @@ function saveSession(s){sessionStorage.setItem(KEY_SESSION,JSON.stringify(s));}
 function clearSession(){sessionStorage.removeItem(KEY_SESSION);}
 function hash(str){let h=0;for(let i=0;i<str.length;i++){h=Math.imul(31,h)+str.charCodeAt(i)|0;}return "h"+(h>>>0).toString(16);}
 
-/* ================== VOICE (TTS) ================== */
-const VOICE_ON_KEY="maya_voice_on"; const VOICE_NAME_KEY="maya_voice_name";
-const coachLine=$("#coachLine"); const mouthEl=$("#mouth");
-const btnVoice=$("#btnVoice"), voiceSelect=$("#voiceSelect"), btnTestVoice=$("#btnTestVoice");
-let mayaVoiceOn=JSON.parse(localStorage.getItem(VOICE_ON_KEY)||"false");
-let mayaVoiceName=localStorage.getItem(VOICE_NAME_KEY)||""; let mayaVoices=[];
+/* ====== Video fallback handling ====== */
+const videoEl = document.getElementById('mayaVideo');
+const fallbackEl = document.getElementById('avatarFallback');
+videoEl.addEventListener('error', ()=>{ videoEl.style.display="none"; fallbackEl.style.display="block"; });
+videoEl.addEventListener('loadeddata', ()=>{ fallbackEl.style.display="none"; });
 
-function updateVoiceButton(){btnVoice.textContent = mayaVoiceOn ? "🔊 Voice On" : "🔈 Voice Off";}
-updateVoiceButton();
-function populateVoices(){ if(!("speechSynthesis" in window)) return; mayaVoices=speechSynthesis.getVoices(); voiceSelect.innerHTML=""; const preferred=["en-US","en-GB","en-IN"]; mayaVoices.forEach(v=>{const opt=document.createElement("option"); opt.value=v.name; opt.textContent=`${v.name} — ${v.lang}`; if((mayaVoiceName&&v.name===mayaVoiceName)||(!mayaVoiceName&&preferred.some(p=>v.lang.startsWith(p)))){opt.selected=true; mayaVoiceName=v.name;} voiceSelect.appendChild(opt);});}
-if(typeof speechSynthesis!=="undefined"){populateVoices(); speechSynthesis.onvoiceschanged=populateVoices;}
-btnVoice.addEventListener("click",()=>{mayaVoiceOn=!mayaVoiceOn; localStorage.setItem(VOICE_ON_KEY,JSON.stringify(mayaVoiceOn)); updateVoiceButton(); if(mayaVoiceOn) testVoice();});
-voiceSelect.addEventListener("change",()=>{mayaVoiceName=voiceSelect.value; localStorage.setItem(VOICE_NAME_KEY,mayaVoiceName);});
-btnTestVoice.addEventListener("click",testVoice);
-function testVoice(){ speak("Hi, I am Coach Maya. Let's take one small step today."); }
-function getMayaVoice(){ const list=("speechSynthesis" in window)?speechSynthesis.getVoices():[]; return list.find(v=>v.name===mayaVoiceName)||list[0]||null; }
-function mouthStart(){mouthEl?.classList.add("talking");}
-function mouthStop(){mouthEl?.classList.remove("talking");}
-function setCoachLine(text){coachLine.innerHTML=text;}
-function speak(text){return new Promise((resolve)=>{ if(!mayaVoiceOn||typeof speechSynthesis==="undefined"||!text){ setCoachLine(text||""); return resolve(); } speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const v=getMayaVoice(); if(v) u.voice=v; u.rate=1.02; u.pitch=1.05; u.lang=(v&&v.lang)||"en-US"; u.onstart=()=>{mouthStart(); setCoachLine(text);}; u.onend=()=>{mouthStop(); resolve();}; u.onerror=()=>{mouthStop(); resolve();}; speechSynthesis.speak(u);});}
-async function speakQueue(lines){ for(const l of lines){ await speak(l); await new Promise(r=>setTimeout(r,200)); } }
-function talk(text){ setCoachLine(text); if(mayaVoiceOn) speak(text); }
+/* ====== Voice: force US-English, clean ====== */
+let selectedVoice=null;
+const preferredVoices=[/Google US English/i,/Samantha/i,/Allison/i,/Aria Online.*\(Natural\)/i,/Jenny/i];
+function pickUSVoice(list){
+  let us=list.filter(v=>/^en-US/i.test(v.lang));
+  for(const re of preferredVoices){ const hit=us.find(v=>re.test(v.name)); if(hit) return hit; }
+  if(us.length) return us[0];
+  const en=list.filter(v=>/^en/i.test(v.lang)); return en[0]||list[0]||null;
+}
+function initVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const voices=speechSynthesis.getVoices();
+  selectedVoice = pickUSVoice(voices);
+  const sel=document.getElementById('voiceSelect');
+  sel.innerHTML="";
+  voices.forEach(v=>{
+    const opt=document.createElement('option');
+    opt.value=v.name; opt.textContent=`${v.name} — ${v.lang}`;
+    if(selectedVoice && v.name===selectedVoice.name) opt.selected=true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', ()=>{ const ch=voices.find(v=>v.name===sel.value); if(ch) selectedVoice=ch; });
+}
+if('speechSynthesis' in window){ speechSynthesis.onvoiceschanged=initVoices; initVoices(); }
+const btnVoice=$("#btnVoice"), btnTest=$("#btnTestVoice");
+let voiceOn=false;
+btnVoice.addEventListener("click",()=>{ voiceOn=!voiceOn; btnVoice.textContent = voiceOn? "🔊 Voice On" : "🔈 Voice Off"; if(voiceOn) speakLine("Hi, I am Coach Maya. Let's take one small step today."); });
+btnTest.addEventListener("click",()=> speakLine("Testing voice. Sounds good!"));
+function speakLine(text){
+  return new Promise(res=>{
+    if(!voiceOn || !('speechSynthesis' in window) || !text) return res();
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    if(selectedVoice) u.voice=selectedVoice;
+    u.rate=1.02; u.pitch=1.02; u.lang=(selectedVoice&&selectedVoice.lang)||'en-US';
+    u.onend=res; u.onerror=res; speechSynthesis.speak(u);
+  });
+}
+async function speakQueue(lines){ for(const l of lines){ await speakLine(l); await new Promise(r=>setTimeout(r,180)); } }
 
-/* ================== UI HELPERS ================== */
+/* ====== Coach text helpers ====== */
+const coachLine=$("#coachLine");
+function talk(text){ coachLine.innerHTML=text; if(voiceOn) speakLine(text); }
+function confetti(){ const c=$("#confetti"); for(let i=0;i<100;i++){const p=document.createElement("i"); p.style.setProperty("--h",Math.floor(Math.random()*360)); p.style.left=Math.random()*100+"vw"; p.style.animationDelay=(Math.random()*0.5)+"s"; c.appendChild(p); setTimeout(()=>p.remove(),1800);} }
+
+/* ====== EmailJS helpers ====== */
+(function emailInit(){ if(!EMAIL_ENABLED) return; try{ emailjs.init(EMAILJS_PUBLIC_KEY);}catch(e){console.warn("EmailJS init error",e);} })();
+async function sendEmail(to_email,to_name,subject,message){
+  if(!EMAIL_ENABLED || !to_email) return;
+  try{ await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email,to_name,subject,message}); }
+  catch(e){ console.warn("Email failed",e); }
+}
+
+/* ====== Reminders (client-only) ====== */
+const MIN=60*1000, H12=12*60*MIN;
+function toMinutes(hhmm="08:00"){ const [h,m]=(hhmm||"").split(":").map(Number); return (!Number.isFinite(h)||!Number.isFinite(m))?480:(h*60+m); }
+function computeNextFreqDue(msNow,freq,hour){
+  const hm=toMinutes(hour); const d=new Date(msNow);
+  let next=new Date(d); next.setHours(Math.floor(hm/60), hm%60, 0, 0);
+  if(next.getTime()<=msNow) next=new Date(next.getTime()+24*60*MIN);
+  if(freq==="DAILY") return next.getTime();
+  if(freq==="WEEKLY") return next.getTime()+6*24*60*MIN;
+  if(freq==="MWF"){ const isMWF=(dt)=>[1,3,5].includes(dt.getDay()); while(!isMWF(next)) next=new Date(next.getTime()+24*60*MIN); return next.getTime(); }
+  return next.getTime();
+}
+function maybeSendOverdueReminder(user){
+  if(!user?.reminder?.email) return;
+  const now=Date.now();
+  if(user.nextDueFreq && now>=user.nextDueFreq){
+    sendEmail(user.reminder.email,user.name,"Coach Maya — quick check-in","Ready for a 30-second check-in? Tiny steps: add 1/2 cup beans, a handful of greens, whole fruit, or a whole-grain swap.");
+    user.nextDueFreq = computeNextFreqDue(now+MIN, user.reminder.freq, user.reminder.hour);
+  }
+  if(user.nextDueInactivity && now>=user.nextDueInactivity){
+    sendEmail(user.reminder.email,user.name,"Coach Maya — we miss you 💚","Haven’t seen you in a while — want to check in? Even one tiny step today counts.");
+    user.nextDueInactivity = now + H12;
+  }
+}
+setInterval(()=>{ const s=loadSession(); const users=loadUsers(); if(!s||!users[s.username]) return; const user=users[s.username]; maybeSendOverdueReminder(user); users[s.username]=user; saveUsers(users); },60*1000);
+
+/* ====== UI & app state ====== */
 const streakPill=$("#streakPill"), welcomeLine=$("#welcomeLine"), historyDots=$("#historyDots");
-function confetti(){ const c=$("#confetti"); for(let i=0;i<100;i++){ const piece=document.createElement("i"); piece.style.setProperty("--h",Math.floor(Math.random()*360)); piece.style.left=Math.random()*100+"vw"; piece.style.animationDelay=(Math.random()*0.5)+"s"; c.appendChild(piece); setTimeout(()=>piece.remove(),1800);} }
 function updateStreak(user){ streakPill.textContent=`Streak: ${user.streak||0}`; }
 function updateHistory(user){ const days=[]; const now=new Date(); for(let i=9;i>=0;i--){const d=new Date(now); d.setDate(now.getDate()-i); const k=d.toISOString().slice(0,10); const ok=(user.history?.[k]||[]).every(Boolean); days.push({k,ok});} historyDots.innerHTML=days.map(d=>`<div class="dot ${d.ok?"ok":""}" title="${d.k}: ${d.ok?"all goals met":"incomplete"}"></div>`).join(""); }
 
-/* ================== AUTH ================== */
 const authSection=$("#authSection"), introSection=$("#introSection"), checkinSection=$("#checkinSection");
 $("#btnLogin").addEventListener("click", ()=>{
   const un=$("#username").value.trim(), pw=$("#password").value;
   if(!un||!pw){alert("Enter both username and password.");return;}
   const users=loadUsers();
-  if(!users[un]){ users[un]={pass:hash(pw),name:"",motivation:"",onboarded:false,streak:0,history:{},_streakCounted:null}; saveUsers(users); }
+  if(!users[un]){ users[un]={pass:hash(pw),name:"",motivation:"",onboarded:false,streak:0,history:{},_streakCounted:null,reminder:null,nextDueFreq:null,nextDueInactivity:null}; saveUsers(users); }
   else if(users[un].pass!==hash(pw)){ alert("Wrong password."); return; }
   saveSession({username:un}); showApp();
 });
 $("#btnNew").addEventListener("click", ()=>{
   const un=$("#username").value.trim(), pw=$("#password").value;
   if(!un||!pw){alert("Enter a username & password to create/reset.");return;}
-  const users=loadUsers(); users[un]={pass:hash(pw),name:"",motivation:"",onboarded:false,streak:0,history:{},_streakCounted:null}; saveUsers(users); saveSession({username:un}); showApp(true);
+  const users=loadUsers(); users[un]={pass:hash(pw),name:"",motivation:"",onboarded:false,streak:0,history:{},_streakCounted:null,reminder:null,nextDueFreq:null,nextDueInactivity:null}; saveUsers(users); saveSession({username:un}); showApp(true);
 });
 $("#btnLogout").addEventListener("click",()=>{ clearSession(); location.reload(); });
 
@@ -279,23 +366,33 @@ function showApp(isNew=false){
     introSection.hidden=true; checkinSection.hidden=false;
     greetUser(user);
     updateHistory(user); updateStreak(user);
+    maybeSendOverdueReminder(user);
   }
 }
 function greetUser(user, first=false){
   const line = first?`Nice to meet you, ${user.name}! I’ll keep your progress on this device.`:`Welcome back, ${user.name}! Ready for today’s quick WFPB check-in?`;
   talk(line);
-  welcomeLine.textContent=`Welcome back, ${user.name}! Your why: “${user.motivation||"—"}”.`;
+  welcomeLine.innerHTML=`Welcome back, <b>${user.name}</b>! Your why: “${user.motivation||"—"}”.`;
 }
 
-/* ================== ONBOARDING ================== */
+/* ====== Onboarding save ====== */
 const introMsg=$("#introMsg");
 $("#btnSaveIntro").addEventListener("click", async ()=>{
   const s=loadSession(); const users=loadUsers(); const user=users[s.username];
   user.name = $("#displayName").value.trim() || "Friend";
   user.motivation = $("#motivation").value.trim() || "";
-  user.onboarded = true;
-  introMsg.textContent="Saved ✓";
-  saveUsers(users);
+  const email=$("#email").value.trim(); const freq=$("#freq").value; const hour=$("#hour").value.trim()||"08:00";
+  user.reminder = email ? { email, freq, hour } : null;
+  // schedule email reminders
+  if(email){
+    user.nextDueFreq = computeNextFreqDue(Date.now(), freq, hour);
+    user.nextDueInactivity = Date.now() + H12;
+    introMsg.textContent="Saved. Sending welcome email…";
+    await sendEmail(email, user.name, "Welcome to Coach Maya", `Hi ${user.name}, I'm Coach Maya. We'll use tiny steps toward colorful vegetables, legumes, whole fruit, and whole grains. Your 'why': "${user.motivation}".`);
+  } else {
+    introMsg.textContent="Saved ✓ (emails off)";
+  }
+  user.onboarded = true; saveUsers(users);
 
   await speakQueue([
     `Hi ${user.name}, I’m Coach Maya.`,
@@ -307,7 +404,7 @@ $("#btnSaveIntro").addEventListener("click", async ()=>{
   introSection.hidden=true; checkinSection.hidden=false; greetUser(user,true);
 });
 
-/* ================== DAILY CHECK-IN ================== */
+/* ====== Daily check-in ====== */
 const qVeg=$("#qVeg"), qLeg=$("#qLeg"), qFruit=$("#qFruit"), qGrain=$("#qGrain"), saveMsg=$("#saveMsg"), result=$("#result");
 function normalize(s){ return (s||"").toLowerCase().trim(); }
 function isYes(s){ s=normalize(s); return /^(y|yes|ya|done|ok|sure|yep)/.test(s) || /(spinach|kale|broccoli|carrot|pepper|tomato|beet|veg|salad|greens|dal|chana|lentil|bean|hummus|tofu|tempeh|banana|apple|orange|berries|oat|brown rice|whole|wheat|pasta)/.test(s); }
@@ -327,45 +424,35 @@ function incrementStreak(user){
   const yKey=yesterday.toISOString().slice(0,10);
   const todayComplete=(user.history[todayKey]||[]).every(Boolean);
   const yComplete=(user.history[yKey]||[]).every(Boolean);
-  if(todayComplete){
-    if(user._streakCounted===todayKey) return;
-    user.streak = yComplete ? (user.streak||0)+1 : 1;
-    user._streakCounted=todayKey;
-  }
+  if(todayComplete){ if(user._streakCounted===todayKey) return; user.streak = yComplete ? (user.streak||0)+1 : 1; user._streakCounted=todayKey; }
 }
 $("#btnSave").addEventListener("click", async ()=>{
   const s=loadSession(); const users=loadUsers(); const user=users[s.username];
+  user.history = user.history || {};
   const veg=resFromInput(qVeg.value,"veg"), leg=resFromInput(qLeg.value,"leg"), fru=resFromInput(qFruit.value,"fruit"), gra=resFromInput(qGrain.value,"grain");
-  const todayKey = new Date().toISOString().slice(0,10);
-  user.history[todayKey] = [veg.met, leg.met, fru.met, gra.met];
-  saveUsers(users);
+  const todayKey=new Date().toISOString().slice(0,10);
+  user.history[todayKey]=[veg.met,leg.met,fru.met,gra.met];
 
-  const allMet = [veg.met,leg.met,fru.met,gra.met].every(Boolean);
-  if(allMet){
-    confetti(); talk(`Outstanding, ${user.name}! You met all four goals today.`);
-    result.innerHTML=`<p class="small success"><strong>🎉 Congrats!</strong> All four goals met.</p>`;
-    incrementStreak(user);
-  } else {
-    const tips=[veg.tip,leg.tip,fru.tip,gra.tip].filter(Boolean).map(t=>`<li>${t}</li>`).join("");
-    talk(`Good effort, ${user.name}. Let’s close the gaps with tiny steps.`);
-    result.innerHTML=`<p class="small danger"><strong>Progress!</strong> Try these tiny steps:</p><ul class="small">${tips}</ul>`;
-  }
+  const allMet=[veg.met,leg.met,fru.met,gra.met].every(Boolean);
+  if(allMet){ confetti(); talk(`Outstanding, ${user.name}! You met all four goals today.`); result.innerHTML=`<p class="small success"><strong>🎉 Congrats!</strong> All four goals met.</p>`; incrementStreak(user); }
+  else { const tips=[veg.tip,leg.tip,fru.tip,gra.tip].filter(Boolean).map(t=>`<li>${t}</li>`).join(""); talk(`Good effort, ${user.name}. Let’s close the gaps with tiny steps.`); result.innerHTML=`<p class="small danger"><strong>Progress!</strong> Try these tiny steps:</p><ul class="small">${tips}</ul>`; }
+
+  // Inactivity clock resets after engagement
+  if(user.reminder?.email){ user.nextDueInactivity = Date.now() + H12; }
+
   saveMsg.textContent="Saved ✓"; setTimeout(()=>saveMsg.textContent="",1200);
-  updateHistory(user); updateStreak(user);
+  saveUsers(users); updateHistory(user); updateStreak(user);
 
-  // spoken recap
-  const feedback = [veg,leg,fru,gra].map(x=>x.tip);
-  await speakQueue([
-    `Welcome back, ${user.name}.`,
-    allMet ? "Four wins today. I’m proud of you." : "Tiny steps will get us there.",
-    ...feedback.slice(0,3)
-  ]);
+  const feedback=[veg,leg,fru,gra].map(x=>x.tip);
+  await speakQueue([`Welcome back, ${user.name}.`, allMet ? "Four wins today. I’m proud of you." : "Tiny steps will get us there.", ...feedback.slice(0,3)]);
 });
 
-/* ================== INIT ================== */
+/* ====== Init ====== */
 (function init(){
+  if(!EMAIL_ENABLED){ console.log("Emails disabled. Set EMAIL_ENABLED=true + keys."); }
   const s=loadSession(); if(s){ showApp(); } else { $("#authSection").hidden=false; }
 })();
 </script>
 </body>
 </html>
+
