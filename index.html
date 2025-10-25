@@ -4,10 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Coach Maya — Whole-Food, Plant-Based Coach</title>
-<meta name="description" content="Coach Maya: simple lifestyle coach for whole-food, plant-based habits with check-ins, TTS, and email reminders (single-file demo).">
+<meta name="description" content="Coach Maya: simple lifestyle coach for whole-food, plant-based habits with check-ins and a speaking avatar.">
 <style>
   :root{
-    --bg:#0f172a;--ink:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--accent2:#86efac;--card:#0b1220;--line:#1f2937;
+    --bg:#0f172a;--ink:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--accent2:#86efac;--card:#0b1324;--line:#1f2937;
+    --gold:#d9b45a;--hair:#2b1a12;--skin1:#f1c08a;--skin2:#c98a5a;--lip:#a15a4a;--blush:#e9a0a0;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(1000px 700px at 20% -10%,#1e293b 0%,var(--bg) 60%);color:var(--ink);min-height:100vh;display:grid;place-items:center;padding:24px}
@@ -15,25 +16,43 @@
   header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
   header h1{font-size:1.1rem;margin:0;color:var(--accent2)}
   .tag{padding:2px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:12px}
-
   .grid{display:grid;gap:16px}
   @media(min-width:900px){.grid{grid-template-columns:360px 1fr}}
-
-  .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0));border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
   .coach{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;text-align:center}
 
-  /* Simple avatar */
-  .face{width:160px;height:180px;margin:8px auto 12px;position:relative;filter:drop-shadow(0 6px 16px rgba(0,0,0,.3))}
-  .head{width:100%;height:100%;border-radius:50%;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 30%,#ffe7c4,#f4cfa1 70%);border:2px solid #f1c48e;animation:float 4s ease-in-out infinite}
+  /* ----- HISPANIC MAYA AVATAR ----- */
+  .avatar{position:relative;width:220px;height:260px;margin:8px auto 12px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.35))}
+  .torso{position:absolute; left:50%; bottom:0; transform:translateX(-50%); width:200px; height:110px; background:linear-gradient(180deg,#6b7280,#4b5563); border-radius:100px 100px 12px 12px; border:1px solid #394150;}
+  .cardi{position:absolute; left:50%; bottom:40px; transform:translateX(-50%); width:210px; height:130px; background:linear-gradient(180deg,#f1a6a6,#d77777); border-radius:120px 120px 20px 20px; border:1px solid #7a3a3a; opacity:.9;}
+  .headWrap{position:absolute; left:50%; top:28px; transform:translateX(-50%);}
+  .head{position:relative; width:180px; height:200px; border-radius:48% 52% 46% 54%/52% 48% 54% 46%; background:radial-gradient(70% 70% at 50% 32%, var(--skin1), var(--skin2) 75%); border:2px solid #b37a49; animation:float 4s ease-in-out infinite;}
   @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-  .eye{width:18px;height:18px;background:#111;border-radius:50%;position:absolute;top:64px}
-  .eye.left{left:48px}.eye.right{right:48px}
-  .eye::after{content:'';position:absolute;width:6px;height:6px;background:#fff;border-radius:50%;top:4px;left:9px}
+  .hairCap{position:absolute; inset:-8px -10px auto -10px; height:120px; border-radius:60% 60% 40% 40%; background:radial-gradient(120% 80% at 50% 30%, #3a251a, var(--hair)); z-index:2;}
+  .sideWave{position:absolute; width:36px; height:54px; background:var(--hair); top:58px; border-radius:60% 40% 60% 40%;}
+  .sideWave.left{left:-6px; transform:rotate(-12deg)} .sideWave.right{right:-6px; transform:rotate(12deg)}
+  .babyHair{position:absolute; width:36px; height:18px; top:88px; background:linear-gradient(180deg,transparent,rgba(43,26,18,.7)); border-radius:50px;}
+  .babyHair.left{left:8px; transform:rotate(-12deg)} .babyHair.right{right:8px; transform:rotate(12deg)}
+  .bun{position:absolute; width:90px; height:90px; background:radial-gradient(120% 100% at 50% 30%, #3b261b, var(--hair)); border-radius:50%; left:50%; top:-28px; transform:translateX(-50%); box-shadow:0 6px 0 rgba(0,0,0,.08) inset;}
+  .ear{position:absolute; top:92px; width:26px; height:34px; background:linear-gradient(180deg,var(--skin1),var(--skin2)); border:2px solid #b37a49; border-radius:50px; z-index:1;}
+  .ear.left{left:-10px} .ear.right{right:-10px}
+  .earring{position:absolute; width:22px; height:22px; border:3px solid var(--gold); border-radius:50%; top:116px; background:transparent; box-shadow:0 0 6px rgba(217,180,90,.4);}
+  .earring.left{left:-14px} .earring.right{right:-14px}
+  .eye{position:absolute; top:92px; width:24px; height:24px; background:#1a1a1a; border-radius:50%;}
+  .eye.left{left:52px} .eye.right{right:52px}
+  .eye::after{content:''; position:absolute; width:7px; height:7px; background:#fff; border-radius:50%; top:4px; left:10px}
   .blink{animation:blink 6s infinite}
   @keyframes blink{0%,96%,100%{transform:scaleY(1)}97%,99%{transform:scaleY(0.1)}}
-  .mouth{width:66px;height:30px;border:4px solid #9b5e2e;border-top:none;border-radius:0 0 60px 60px;position:absolute;left:50%;transform:translateX(-50%);bottom:40px;background:#fbe0bd}
-  .mouth.talking{animation:talk 350ms ease-in-out infinite}
-  @keyframes talk{0%,100%{transform:translateX(-50%) scaleY(0.9)}50%{transform:translateX(-50%) scaleY(1.25)}}
+  .brow{position:absolute; top:76px; width:46px; height:14px; border-top:5px solid #3a261b; border-radius:60px; opacity:.9;}
+  .brow.left{left:40px; transform:rotate(-6deg)} .brow.right{right:40px; transform:rotate(6deg)}
+  .lash{position:absolute; top:100px; width:30px; height:10px; border-bottom:3px solid #1a1410; border-radius:0 0 60px 60px; opacity:.85;}
+  .lash.left{left:46px; transform:rotate(-8deg)} .lash.right{right:46px; transform:rotate(8deg)}
+  .nose{position:absolute; top:118px; left:50%; transform:translateX(-50%); width:24px; height:18px; border-left:3px solid rgba(133,84,50,.7); border-right:3px solid rgba(133,84,50,.7); border-radius:0 0 18px 18px; opacity:.7;}
+  .cheek{position:absolute; top:132px; width:38px; height:22px; background:radial-gradient(65% 80% at 50% 50%, var(--blush), transparent 65%); opacity:.6; border-radius:50px;}
+  .cheek.left{left:28px} .cheek.right{right:28px}
+  .mouth{position:absolute; left:50%; bottom:48px; transform:translateX(-50%); width:72px; height:34px; background:linear-gradient(180deg,#f4c19c,#e9b289); border:4px solid #8e563f; border-top:none; border-radius:0 0 60px 60px; box-shadow:0 -6px 0 var(--lip) inset;}
+  .mouth.talking{animation:talk 360ms ease-in-out infinite}
+  @keyframes talk{0%,100%{transform:translateX(-50%) scaleY(0.85)}50%{transform:translateX(-50%) scaleY(1.22)}}
 
   .speech{font-size:.95rem;color:var(--ink);background:#0b1324;border:1px solid #1e293b;border-radius:12px;padding:12px;min-height:48px}
   .small{color:var(--muted);font-size:.85rem}
@@ -51,7 +70,6 @@
   .confetti{pointer-events:none;position:fixed;inset:0;overflow:hidden}
   .confetti i{position:absolute;width:10px;height:14px;background:hsl(var(--h),90%,60%);top:-20px;opacity:.9;animation:fall 1400ms linear forwards}
   @keyframes fall{to{transform:translateY(120vh) rotate(360deg);opacity:1}}
-
   .danger{color:#fca5a5}
   .success{color:#86efac}
 </style>
@@ -60,20 +78,38 @@
 <div class="app">
   <header>
     <h1>Coach Maya — Whole-Food, Plant-Based</h1>
-    <span class="tag">Password login • Email reminders • Typed replies</span>
+    <span class="tag">Password login • Local-only data • Typed replies</span>
   </header>
 
   <div class="grid">
     <!-- COACH PANEL -->
     <div class="coach card" aria-live="polite">
-      <div class="face" aria-hidden="true">
-        <div class="head">
-          <div class="eye left blink"></div>
-          <div class="eye right blink"></div>
-          <div class="mouth" id="mouth"></div>
+      <!-- Avatar -->
+      <div class="avatar" aria-hidden="true">
+        <div class="torso"></div>
+        <div class="cardi"></div>
+        <div class="headWrap">
+          <div class="head">
+            <div class="bun"></div>
+            <div class="hairCap"></div>
+            <div class="sideWave left"></div><div class="sideWave right"></div>
+            <div class="babyHair left"></div><div class="babyHair right"></div>
+            <div class="ear left"></div><div class="ear right"></div>
+            <div class="earring left" title="gold hoop"></div>
+            <div class="earring right" title="gold hoop"></div>
+            <div class="brow left"></div><div class="brow right"></div>
+            <div class="eye left blink"></div><div class="eye right blink"></div>
+            <div class="lash left"></div><div class="lash right"></div>
+            <div class="nose"></div>
+            <div class="cheek left"></div><div class="cheek right"></div>
+            <div class="mouth" id="mouth"></div>
+          </div>
         </div>
       </div>
-      <div id="coachLine" class="speech">Hi! I’m <b>Maya</b>, your friendly lifestyle coach. Let’s build tiny, powerful habits together.</div>
+
+      <div id="coachLine" class="speech">
+        Hi! I’m <b>Maya</b>, your friendly lifestyle coach. Let’s build tiny, powerful habits together.
+      </div>
 
       <div class="row" style="margin-top:10px">
         <span class="pill" id="streakPill">Streak: 0</span>
@@ -120,56 +156,41 @@
         </div>
         <label>Your one-line motivation for this change</label>
         <input id="motivation" placeholder="e.g., I want more energy / lower cholesterol / feel good in my body" />
-
-        <div style="margin-top:12px">
-          <h3 style="margin:0 0 6px">Get gentle email reminders</h3>
-          <label>Email</label>
-          <input id="email" type="email" placeholder="you@example.com" />
-          <label>Frequency</label>
-          <select id="freq">
-            <option value="DAILY">Daily</option>
-            <option value="MWF">Mon • Wed • Fri</option>
-            <option value="WEEKLY">Weekly</option>
-          </select>
-          <label>Preferred local time (HH:MM)</label>
-          <input id="hour" placeholder="08:00" />
-          <div class="row" style="margin-top:8px">
-            <button id="btnSaveIntro">Save & Continue</button>
-            <span id="introMsg" class="small"></span>
-          </div>
-          <p class="small">By enabling reminders, you consent to receive coaching nudges from Maya. Unsubscribe by replying “STOP”.</p>
+        <div class="row" style="margin-top:8px">
+          <button id="btnSaveIntro">Save & Continue</button>
+          <span id="introMsg" class="small"></span>
         </div>
       </section>
 
       <!-- DAILY CHECK-IN -->
       <section id="checkinSection" hidden>
         <div class="row" style="justify-content:space-between;align-items:center">
-          <h2 style="margin:0">Daily Check-In</h2>
+          <h2 style="margin:0">🌿 Daily Check-In</h2>
           <button class="secondary" id="btnLogout">Logout</button>
         </div>
         <p id="welcomeLine" class="small"></p>
 
         <div class="goalbox">
           <div class="qrow">
-            <label>🥦 Veg variety today? (dark green/red/orange)</label>
-            <input id="qVeg" placeholder='e.g., "yes broccoli" or "no"' />
+            <label>1️⃣ Did you eat colorful non-starchy veggies today?</label>
+            <input id="qVeg" placeholder='yes/no or a few words (e.g., "broccoli")' />
           </div>
           <div class="qrow">
-            <label>🫘 Any beans/lentils/peas today?</label>
-            <input id="qLeg" placeholder='e.g., "dal" or "no time"' />
+            <label>2️⃣ Any beans, peas, or lentils?</label>
+            <input id="qLeg" placeholder='yes/no or e.g., "dal/chickpeas"' />
           </div>
           <div class="qrow">
-            <label>🍎 Whole fruit instead of juice/sweetened fruit?</label>
-            <input id="qFruit" placeholder='e.g., "banana" or "no"' />
+            <label>3️⃣ Whole fruit instead of juice?</label>
+            <input id="qFruit" placeholder='yes/no or e.g., "banana"' />
           </div>
           <div class="qrow">
-            <label>🌾 Whole-grain swap today?</label>
-            <input id="qGrain" placeholder='e.g., "brown rice" or "no"' />
+            <label>4️⃣ Any whole grains?</label>
+            <input id="qGrain" placeholder='yes/no or e.g., "brown rice"' />
           </div>
         </div>
 
         <div class="row" style="margin-top:12px">
-          <button id="btnSave">Save today’s check-in</button>
+          <button id="btnSave">Submit</button>
           <span id="saveMsg" class="small"></span>
         </div>
 
@@ -186,28 +207,12 @@
 
 <div class="confetti" id="confetti"></div>
 
-<!-- EmailJS SDK (for client-side emails). Replace keys below to enable emails. -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
 <script>
-/* ===========================================
-   CONFIG — put your EmailJS keys here
-   =========================================== */
-const EMAIL_ENABLED = true;        // set false to disable emails
-const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
-const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
-const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
-/*  Your EmailJS template can accept variables:
-    to_email, to_name, subject, message
-*/
-
-/* ---------- Local storage & session ---------- */
-const KEY_USERS="lm_app_users"; // { username:{pass,name,motivation,reminder,streak,history,nextDueInactivity,nextDueFreq} }
+/* ================== STORAGE & UTIL ================== */
+const KEY_USERS="lm_app_users"; // { username:{pass,name,motivation,onboarded,streak,history,_streakCounted} }
 const KEY_SESSION="lm_app_session";
-
 const $=s=>document.querySelector(s);
-const coachLine=$("#coachLine");
-const today=new Date(); const ymd=today.toISOString().slice(0,10);
+const today=new Date();
 $("#todayPill").textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"medium"}).format(today);
 
 function loadUsers(){return JSON.parse(localStorage.getItem(KEY_USERS)||"{}");}
@@ -217,13 +222,10 @@ function saveSession(s){sessionStorage.setItem(KEY_SESSION,JSON.stringify(s));}
 function clearSession(){sessionStorage.removeItem(KEY_SESSION);}
 function hash(str){let h=0;for(let i=0;i<str.length;i++){h=Math.imul(31,h)+str.charCodeAt(i)|0;}return "h"+(h>>>0).toString(16);}
 
-/* ---------- Sections ---------- */
-const authSection=$("#authSection"), introSection=$("#introSection"), checkinSection=$("#checkinSection");
-const welcomeLine=$("#welcomeLine"), streakPill=$("#streakPill"), saveMsg=$("#saveMsg"), result=$("#result"), historyDots=$("#historyDots");
-
-/* ---------- Voice (TTS) ---------- */
+/* ================== VOICE (TTS) ================== */
 const VOICE_ON_KEY="maya_voice_on"; const VOICE_NAME_KEY="maya_voice_name";
-const btnVoice=$("#btnVoice"), voiceSelect=$("#voiceSelect"), btnTestVoice=$("#btnTestVoice"), mouthEl=document.getElementById("mouth");
+const coachLine=$("#coachLine"); const mouthEl=$("#mouth");
+const btnVoice=$("#btnVoice"), voiceSelect=$("#voiceSelect"), btnTestVoice=$("#btnTestVoice");
 let mayaVoiceOn=JSON.parse(localStorage.getItem(VOICE_ON_KEY)||"false");
 let mayaVoiceName=localStorage.getItem(VOICE_NAME_KEY)||""; let mayaVoices=[];
 
@@ -236,87 +238,65 @@ voiceSelect.addEventListener("change",()=>{mayaVoiceName=voiceSelect.value; loca
 btnTestVoice.addEventListener("click",testVoice);
 function testVoice(){ speak("Hi, I am Coach Maya. Let's take one small step today."); }
 function getMayaVoice(){ const list=("speechSynthesis" in window)?speechSynthesis.getVoices():[]; return list.find(v=>v.name===mayaVoiceName)||list[0]||null; }
-function mouthStart(){mouthEl&&mouthEl.classList.add("talking");}
-function mouthStop(){mouthEl&&mouthEl.classList.remove("talking");}
-function setCoachLine(text){if(coachLine) coachLine.innerHTML=text;}
+function mouthStart(){mouthEl?.classList.add("talking");}
+function mouthStop(){mouthEl?.classList.remove("talking");}
+function setCoachLine(text){coachLine.innerHTML=text;}
 function speak(text){return new Promise((resolve)=>{ if(!mayaVoiceOn||typeof speechSynthesis==="undefined"||!text){ setCoachLine(text||""); return resolve(); } speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const v=getMayaVoice(); if(v) u.voice=v; u.rate=1.02; u.pitch=1.05; u.lang=(v&&v.lang)||"en-US"; u.onstart=()=>{mouthStart(); setCoachLine(text);}; u.onend=()=>{mouthStop(); resolve();}; u.onerror=()=>{mouthStop(); resolve();}; speechSynthesis.speak(u);});}
 async function speakQueue(lines){ for(const l of lines){ await speak(l); await new Promise(r=>setTimeout(r,200)); } }
-
-/* ---------- UI helpers ---------- */
 function talk(text){ setCoachLine(text); if(mayaVoiceOn) speak(text); }
-function greetUser(user,first=false){ const line = first?`Nice to meet you, ${user.name}! I’ll keep your progress on this device.`:`Welcome back, ${user.name}! Ready for today’s quick WFPB check-in?`; talk(line); welcomeLine.textContent=`Your why: “${user.motivation||"—"}”`; }
+
+/* ================== UI HELPERS ================== */
+const streakPill=$("#streakPill"), welcomeLine=$("#welcomeLine"), historyDots=$("#historyDots");
 function confetti(){ const c=$("#confetti"); for(let i=0;i<100;i++){ const piece=document.createElement("i"); piece.style.setProperty("--h",Math.floor(Math.random()*360)); piece.style.left=Math.random()*100+"vw"; piece.style.animationDelay=(Math.random()*0.5)+"s"; c.appendChild(piece); setTimeout(()=>piece.remove(),1800);} }
 function updateStreak(user){ streakPill.textContent=`Streak: ${user.streak||0}`; }
 function updateHistory(user){ const days=[]; const now=new Date(); for(let i=9;i>=0;i--){const d=new Date(now); d.setDate(now.getDate()-i); const k=d.toISOString().slice(0,10); const ok=(user.history?.[k]||[]).every(Boolean); days.push({k,ok});} historyDots.innerHTML=days.map(d=>`<div class="dot ${d.ok?"ok":""}" title="${d.k}: ${d.ok?"all goals met":"incomplete"}"></div>`).join(""); }
 
-/* ---------- EmailJS ---------- */
-function emailInit(){
-  if(!EMAIL_ENABLED) return;
-  try{ emailjs.init(EMAILJS_PUBLIC_KEY); }catch(e){ console.warn("EmailJS init error", e); }
-}
-async function sendEmail(to_email, to_name, subject, message){
-  if(!EMAIL_ENABLED || !to_email || !EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) return {ok:false,skipped:true};
-  try{
-    const res = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email, to_name, subject, message });
-    return {ok:true,res};
-  }catch(e){
-    console.warn("Email send failed:", e);
-    return {ok:false,error:e?.text||String(e)};
-  }
-}
-
-/* ---------- Auth ---------- */
-$("#btnLogin").addEventListener("click", async ()=>{
-  const un=$("#username").value.trim(), pw=$("#password").value; if(!un||!pw){alert("Enter both username and password.");return;}
+/* ================== AUTH ================== */
+const authSection=$("#authSection"), introSection=$("#introSection"), checkinSection=$("#checkinSection");
+$("#btnLogin").addEventListener("click", ()=>{
+  const un=$("#username").value.trim(), pw=$("#password").value;
+  if(!un||!pw){alert("Enter both username and password.");return;}
   const users=loadUsers();
-  if(!users[un]){ users[un]={pass:hash(pw),name:"",motivation:"",onboarded:false,streak:0,history:{},reminder:null,_streakCounted:null,nextDueInactivity:null,nextDueFreq:null}; saveUsers(users); }
+  if(!users[un]){ users[un]={pass:hash(pw),name:"",motivation:"",onboarded:false,streak:0,history:{},_streakCounted:null}; saveUsers(users); }
   else if(users[un].pass!==hash(pw)){ alert("Wrong password."); return; }
   saveSession({username:un}); showApp();
-  scheduleInactivity(users[un]); // start a 12h clock from login
 });
-$("#btnNew").addEventListener("click", async ()=>{
-  const un=$("#username").value.trim(), pw=$("#password").value; if(!un||!pw){alert("Enter a username & password to create/reset.");return;}
-  const users=loadUsers(); users[un]={pass:hash(pw),name:"",motivation:"",onboarded:false,streak:0,history:{},reminder:null,_streakCounted:null,nextDueInactivity:null,nextDueFreq:null}; saveUsers(users); saveSession({username:un}); showApp(true);
-  scheduleInactivity(users[un]);
+$("#btnNew").addEventListener("click", ()=>{
+  const un=$("#username").value.trim(), pw=$("#password").value;
+  if(!un||!pw){alert("Enter a username & password to create/reset.");return;}
+  const users=loadUsers(); users[un]={pass:hash(pw),name:"",motivation:"",onboarded:false,streak:0,history:{},_streakCounted:null}; saveUsers(users); saveSession({username:un}); showApp(true);
 });
 $("#btnLogout").addEventListener("click",()=>{ clearSession(); location.reload(); });
 
-/* ---------- App state ---------- */
 function showApp(isNew=false){
-  const s=loadSession(); const u=loadUsers(); if(!s||!u[s.username]){authSection.hidden=false; introSection.hidden=true; checkinSection.hidden=true; return;}
+  const s=loadSession(); const u=loadUsers();
+  if(!s||!u[s.username]){authSection.hidden=false; introSection.hidden=true; checkinSection.hidden=true; return;}
   const user=u[s.username]; authSection.hidden=true;
-  if(!user.onboarded||isNew){ introSection.hidden=false; checkinSection.hidden=true; talk("Hi, I’m Coach Maya. What should I call you, and what’s your one-line motivation?"); }
-  else { introSection.hidden=true; checkinSection.hidden=false; greetUser(user); updateHistory(user); updateStreak(user); maybeSendOverdueReminder(user); }
+  if(!user.onboarded||isNew){
+    introSection.hidden=false; checkinSection.hidden=true;
+    talk("Hi, I’m Coach Maya. What should I call you, and what’s your one-line motivation?");
+  } else {
+    introSection.hidden=true; checkinSection.hidden=false;
+    greetUser(user);
+    updateHistory(user); updateStreak(user);
+  }
+}
+function greetUser(user, first=false){
+  const line = first?`Nice to meet you, ${user.name}! I’ll keep your progress on this device.`:`Welcome back, ${user.name}! Ready for today’s quick WFPB check-in?`;
+  talk(line);
+  welcomeLine.textContent=`Welcome back, ${user.name}! Your why: “${user.motivation||"—"}”.`;
 }
 
-/* ---------- Save intro ---------- */
+/* ================== ONBOARDING ================== */
 const introMsg=$("#introMsg");
 $("#btnSaveIntro").addEventListener("click", async ()=>{
   const s=loadSession(); const users=loadUsers(); const user=users[s.username];
   user.name = $("#displayName").value.trim() || "Friend";
   user.motivation = $("#motivation").value.trim() || "";
   user.onboarded = true;
-
-  // reminder settings
-  const email=$("#email").value.trim(); const freq=$("#freq").value; const hour=$("#hour").value.trim()||"08:00";
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York";
-  user.reminder = email ? { email, freq, hour, timezone } : null;
-
-  if(email){
-    introMsg.textContent="Saving & sending a hello email…";
-    await sendEmail(email, user.name, "Welcome to Coach Maya", `Hi ${user.name}, I'm Coach Maya. We'll use tiny steps toward colorful veggies, legumes, whole fruit, and whole grains. Your 'why': "${user.motivation}".`);
-    // compute next scheduled frequency email timestamp (local; tab must be open)
-    user.nextDueFreq = computeNextFreqDue(Date.now(), freq, hour);
-  }else{
-    introMsg.textContent="Saved ✓ (emails off)";
-  }
-
-  // start a 12h inactivity clock from now
-  user.nextDueInactivity = Date.now() + H12;
-
+  introMsg.textContent="Saved ✓";
   saveUsers(users);
 
-  // Voice intro
   await speakQueue([
     `Hi ${user.name}, I’m Coach Maya.`,
     "We’ll use small, steady steps to build a whole-food, plant-based lifestyle.",
@@ -327,8 +307,8 @@ $("#btnSaveIntro").addEventListener("click", async ()=>{
   introSection.hidden=true; checkinSection.hidden=false; greetUser(user,true);
 });
 
-/* ---------- Typed daily check-in ---------- */
-const qVeg=$("#qVeg"), qLeg=$("#qLeg"), qFruit=$("#qFruit"), qGrain=$("#qGrain");
+/* ================== DAILY CHECK-IN ================== */
+const qVeg=$("#qVeg"), qLeg=$("#qLeg"), qFruit=$("#qFruit"), qGrain=$("#qGrain"), saveMsg=$("#saveMsg"), result=$("#result");
 function normalize(s){ return (s||"").toLowerCase().trim(); }
 function isYes(s){ s=normalize(s); return /^(y|yes|ya|done|ok|sure|yep)/.test(s) || /(spinach|kale|broccoli|carrot|pepper|tomato|beet|veg|salad|greens|dal|chana|lentil|bean|hummus|tofu|tempeh|banana|apple|orange|berries|oat|brown rice|whole|wheat|pasta)/.test(s); }
 function resFromInput(val, type){
@@ -342,20 +322,23 @@ function resFromInput(val, type){
   return {met, tip};
 }
 function incrementStreak(user){
-  const nowKey = new Date().toISOString().slice(0,10);
+  const todayKey=new Date().toISOString().slice(0,10);
   const yesterday=new Date(); yesterday.setDate((new Date()).getDate()-1);
   const yKey=yesterday.toISOString().slice(0,10);
-  const todayComplete=(user.history[nowKey]||[]).every(Boolean);
+  const todayComplete=(user.history[todayKey]||[]).every(Boolean);
   const yComplete=(user.history[yKey]||[]).every(Boolean);
-  if(todayComplete){ if(user._streakCounted===nowKey) return; user.streak = yComplete ? (user.streak||0)+1 : 1; user._streakCounted=nowKey; }
+  if(todayComplete){
+    if(user._streakCounted===todayKey) return;
+    user.streak = yComplete ? (user.streak||0)+1 : 1;
+    user._streakCounted=todayKey;
+  }
 }
-
 $("#btnSave").addEventListener("click", async ()=>{
-  const s=loadSession(); const users=loadUsers(); const user=users[s.username]||{};
+  const s=loadSession(); const users=loadUsers(); const user=users[s.username];
   const veg=resFromInput(qVeg.value,"veg"), leg=resFromInput(qLeg.value,"leg"), fru=resFromInput(qFruit.value,"fruit"), gra=resFromInput(qGrain.value,"grain");
   const todayKey = new Date().toISOString().slice(0,10);
-  user.history = user.history || {};
   user.history[todayKey] = [veg.met, leg.met, fru.met, gra.met];
+  saveUsers(users);
 
   const allMet = [veg.met,leg.met,fru.met,gra.met].every(Boolean);
   if(allMet){
@@ -368,22 +351,9 @@ $("#btnSave").addEventListener("click", async ()=>{
     result.innerHTML=`<p class="small danger"><strong>Progress!</strong> Try these tiny steps:</p><ul class="small">${tips}</ul>`;
   }
   saveMsg.textContent="Saved ✓"; setTimeout(()=>saveMsg.textContent="",1200);
-
-  // reset inactivity timer after check-in
-  user.nextDueInactivity = Date.now() + H12;
-
-  // optional: send quick summary email right now
-  if(user.reminder?.email){
-    const body = allMet
-      ? `Great work, ${user.name}! You met all four WFPB goals today.`
-      : `Nice effort, ${user.name}. Tiny steps: ${[veg.tip,leg.tip,fru.tip,gra.tip].filter(Boolean).join(" ")}`
-    await sendEmail(user.reminder.email, user.name, "Coach Maya — today's check-in", body);
-  }
-
-  saveUsers(users);
   updateHistory(user); updateStreak(user);
 
-  // short spoken recap
+  // spoken recap
   const feedback = [veg,leg,fru,gra].map(x=>x.tip);
   await speakQueue([
     `Welcome back, ${user.name}.`,
@@ -392,71 +362,8 @@ $("#btnSave").addEventListener("click", async ()=>{
   ]);
 });
 
-/* ---------- Reminders & scheduling (front-end only) ---------- */
-const MIN = 60 * 1000;
-const H12 = 12 * 60 * MIN; // 12 hours
-
-function toMinutes(hhmm="08:00"){ const [h,m]=(hhmm||"").split(":").map(Number); return (!Number.isFinite(h)||!Number.isFinite(m))?480:(h*60+m); }
-function computeNextFreqDue(msNow, freq, hour){
-  const hourMin = toMinutes(hour);
-  const d = new Date(msNow);
-  let next = new Date(d);
-  next.setHours(Math.floor(hourMin/60), hourMin%60, 0, 0);
-  if (next.getTime() <= msNow) next = new Date(next.getTime() + 24*60*MIN);
-
-  if (freq === "DAILY") return next.getTime();
-  if (freq === "WEEKLY") return next.getTime() + 6*24*60*MIN;
-  if (freq === "MWF") {
-    const isMWF = (dt)=>[1,3,5].includes(dt.getDay()); // Mon=1..Sun=0
-    while(!isMWF(next)) next = new Date(next.getTime() + 24*60*MIN);
-    return next.getTime();
-  }
-  return next.getTime();
-}
-
-function scheduleInactivity(user){
-  // For single-file demo: we store the timestamp. If the tab is open, we poll and send a nudge when overdue.
-  if(!user) return;
-  if(!user.nextDueInactivity) user.nextDueInactivity = Date.now() + H12;
-  localStorage.setItem(KEY_USERS, JSON.stringify(loadUsers())); // persist
-}
-
-function maybeSendOverdueReminder(user){
-  if(!user?.reminder?.email) return;
-  const now = Date.now();
-  // Frequency reminder catch-up
-  if(user.nextDueFreq && now >= user.nextDueFreq){
-    sendEmail(user.reminder.email, user.name, "Coach Maya — quick check-in", "Ready for a 30-second check-in? Tiny steps: add 1/2 cup beans, one handful of greens, whole fruit, or a whole-grain swap.");
-    user.nextDueFreq = computeNextFreqDue(now + MIN, user.reminder.freq, user.reminder.hour);
-  }
-  // Inactivity (12h since last activity)
-  if(user.nextDueInactivity && now >= user.nextDueInactivity){
-    sendEmail(user.reminder.email, user.name, "Coach Maya — we miss you 💚", "I haven’t seen you in a while — want to check in? Even one tiny step today counts.");
-    user.nextDueInactivity = now + H12;
-  }
-  const users=loadUsers(); const s=loadSession();
-  if(s && users[s.username]){ users[s.username]=user; saveUsers(users); }
-}
-
-// Keep polling while the tab is open (every minute)
-setInterval(()=>{
-  const s=loadSession(); const users=loadUsers();
-  if(!s||!users[s.username]) return;
-  maybeSendOverdueReminder(users[s.username]);
-}, 60*1000);
-
-/* ---------- Confetti + init ---------- */
-function initHistoryAndVoiceRow(){
-  const c=$("#confetti"); if(!c) return;
-}
-function initTodayPill(){ $("#todayPill").textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"medium"}).format(new Date()); }
-function emailDemoNote(){
-  if(!EMAIL_ENABLED) console.log("Emails disabled. Set EMAIL_ENABLED=true and add EmailJS keys.");
-  else if(!(EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID)) console.log("EmailJS keys missing. Add EMAILJS_PUBLIC_KEY / SERVICE_ID / TEMPLATE_ID.");
-}
-
+/* ================== INIT ================== */
 (function init(){
-  emailInit(); emailDemoNote(); initHistoryAndVoiceRow(); initTodayPill();
   const s=loadSession(); if(s){ showApp(); } else { $("#authSection").hidden=false; }
 })();
 </script>
